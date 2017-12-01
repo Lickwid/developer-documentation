@@ -11,51 +11,102 @@ toc_footers:
 
 includes:
   - introduction
-  - addon_intro
-  - addon_structure
-  - addon_install  
-  - addon_config
-  - addon_translations  
-  - addon_mvc
-  - addon_mvc_controllers
-  - addon_mvc_models
-  - addon_mvc_views      
-  - addon_factory
-  - addon_database
-  - addon_permissions
-  - addon_configuration
-  - addon_misc
-  - addon_misc_flashes
-  - addon_misc_helpers
-  - addon_misc_forms
-  - addon_misc_events
-  - addon_extending_intro  
-  - addon_extending_api  
-  - addon_extending_campaigns
-  - addon_extending_categories
-  - addon_extending_emails
-  - addon_extending_forms
-  - addon_extending_integrations
-  - addon_extending_pages
-  - addon_extending_points
-  - addon_extending_reports  
-  - addon_extending_leads
-  - addon_extending_webhooks
+  - plugin_intro
+  - plugin_migrations
+  - plugin_migrations_1.2
+  - plugin_migrations_2.0
+  - plugin_structure
+  - plugin_install
+  - plugin_config
+  - plugin_translations
+  - plugin_mvc
+  - plugin_mvc_controllers
+  - plugin_mvc_models
+  - plugin_mvc_views
+  - plugin_services
+  - plugin_services_factory
+  - plugin_services_users
+  - plugin_services_security
+  - plugin_services_translator
+  - plugin_services_router
+  - plugin_services_request
+  - plugin_services_session
+  - plugin_services_database
+  - plugin_services_parameters
+  - plugin_services_event_dispatcher
+  - plugin_services_paths_helper
+  - plugin_services_ip_lookup_helper
+  - plugin_services_plugin_config_helper
+  - plugin_services_cookie_helper
+  - plugin_services_mail_helper
+  - plugin_services_model_factory
+  - plugin_database
+  - plugin_permissions
+  - plugin_configuration
+  - plugin_manipulating_contacts
+  - plugin_extending_intro
+  - plugin_extending_api
+  - plugin_extending_broadcasts
+  - plugin_extending_campaigns
+  - plugin_extending_categories
+  - plugin_extending_contacts
+  - plugin_extending_emails
+  - plugin_extending_forms
+  - plugin_extending_integrations
+  - plugin_extending_maintenance
+  - plugin_extending_pages
+  - plugin_extending_points
+  - plugin_extending_reports
+  - plugin_extending_webhooks
+  - plugin_extending_ui
+  - plugin_misc
+  - plugin_misc_flashes
+  - plugin_misc_helpers
+  - plugin_misc_helpers_input
+  - plugin_misc_helpers_datetime
+  - plugin_misc_helpers_chartquery
+  - plugin_misc_commands
+  - plugin_misc_forms
+  - plugin_misc_events
+  - plugin_misc_translated_entities.md
+  - plugin_misc_variant_entities.md
   - themes
   - api_intro
   - api_authorization
   - api_authorization_oauth1a
   - api_authorization_oauth2
+  - api_authorization_basic
   - api_libraries
   - api_endpoints
-  - api_endpoint_leads  
   - api_endpoint_assets
   - api_endpoint_campaigns
+  - api_endpoint_categories
+  - api_endpoint_companies
+  - api_endpoint_contacts
+  - api_endpoint_data
+  - api_endpoint_dynamic_contents
+  - api_endpoint_emails
+  - api_endpoint_fields
+  - api_endpoint_files
   - api_endpoint_forms
-  - api_endpoint_lists
+  - api_endpoint_messages
+  - api_endpoint_notes
+  - api_endpoint_notifications
   - api_endpoint_pages
   - api_endpoint_point_actions
   - api_endpoint_point_triggers
-  
+  - api_endpoint_roles
+  - api_endpoint_segments
+  - api_endpoint_smses
+  - api_endpoint_stages
+  - api_endpoint_stats
+  - api_endpoint_themes
+  - api_endpoint_tweets
+  - api_endpoint_users
+  - api_endpoint_webhooks
+  - webhooks
+  - mauticjs_api_intro
+  - mauticjs_api_reference
+
 search: true
 ---

@@ -7,9 +7,11 @@ use Mautic\MauticApi;
 use Mautic\Auth\ApiAuth;
 
 // ...
-$auth     = ApiAuth::initiate($settings);
-$apiUrl   = "https://your-mautic.com"; 
-$campaignApi = MauticApi::getContext("campaigns", $auth, $apiUrl);
+$initAuth    = new ApiAuth();
+$auth        = $initAuth->newAuth($settings);
+$apiUrl      = "https://your-mautic.com";
+$api         = new MauticApi();
+$campaignApi = $api->newApi("campaigns", $auth, $apiUrl);
 ```
 
 ### Get Campaign
@@ -102,7 +104,7 @@ order|int|Order in relation to the other events (used for levels)
 properties|object|Configured properties for the event
 triggerMode|string|"immediate", "interval" or "date"
 triggerDate|datetime/null|Date/time of when the event should trigger if triggerMode is "date"
-triggerInterval|int/null|Interval for when the event should trigger 
+triggerInterval|int/null|Interval for when the event should trigger
 triggerIntervalUnit|string|Interval unit for when the event should trigger. Options are i = minutes, h = hours, d = days, m = months, y = years
 children|array|Array of this event's children ,
 parent|object/null|This event's parent
@@ -113,13 +115,13 @@ decisionPath|string/null|If the event is connected into an action, this will be 
 <?php
 // ...
 
-$campaigns = $campaignApi->getList($searchFilter, $start, $limit, $orderBy, $orderByDir);
+$campaigns = $campaignApi->getList($searchFilter, $start, $limit, $orderBy, $orderByDir, $publishedOnly, $minimal);
 ```
 ```json
 {
     "total": 1,
-    "campaigns": [
-        {
+    "campaigns": {
+        "3": {
             "id": 3,
             "name": "Welcome Campaign",
             "description": null,
@@ -172,7 +174,7 @@ $campaigns = $campaignApi->getList($searchFilter, $start, $limit, $orderBy, $ord
                 }
             }
         }
-    ]
+    }
 }
 ```
 #### HTTP Request
@@ -188,7 +190,8 @@ start|Starting row for the entities returned. Defaults to 0.
 limit|Limit number of entities to return. Defaults to the system configuration for pagination (30).
 orderBy|Column to sort by. Can use any column listed in the response.
 orderByDir|Sort direction: asc or desc.
-publishedOnly|Only return currently published entities.
+published|Only return currently published entities.
+minimal|Return only array of entities without additional lists in it.
 
 #### Response
 
@@ -201,28 +204,35 @@ See JSON code example.
 Same as [Get Campaign](#get-campaign).
 
 
-### Add Lead to a Campaign
+### List Campaign Contacts
+
+This endpoint is basically an alias for the stats endpoint with 'campaign_leads' table and campaign_id specified. Other parameters are the same as in the stats endpoint.
 
 ```php
 <?php
+// ...
 
-//...
-$response = $campaignApi->addLead($leadId, $campaignId);
-if (!isset($response['success'])) {
-    // handle error
-}
+$response = $campaignApi->getContacts($campaignId, $start, $limit, $order, $where);
 ```
 ```json
-{
-    "success": true
+{  
+  "total":"1",
+  "contacts":[  
+    {  
+      "campaign_id":"311",
+      "lead_id":"3126",
+      "date_added":"2017-01-25 15:11:10",
+      "manually_removed":"0",
+      "manually_added":"1"
+    }
+  ]
 }
 ```
-
-Manually add a lead to a specific campaign.
-
 #### HTTP Request
 
-`POST /campaigns/CAMPAIGN_ID/lead/add/LEAD_ID`
+`GET /campaigns/ID/contacts`
+
+**Query Parameters**
 
 #### Response
 
@@ -231,13 +241,117 @@ Manually add a lead to a specific campaign.
 See JSON code example.
 
 
-### Remove Lead from a Campaign
+### Create Campaign
+```php
+<?php
+
+$data = array(
+    'name'        => 'Campaign A',
+    'description' => 'This is my first campaign created via API.',
+    'isPublished' => 1
+);
+
+$campaign = $campaignApi->create($data);
+```
+Create a new campaign. To see more advanced example with campaing events and so on, see the unit tests.
+
+#### HTTP Request
+
+`POST /campaigns/new`
+
+**Post Parameters**
+
+Name|Description
+----|-----------
+name|Campaign name is the only required field
+alias|string|Used to generate the URL for the campaign
+description|A description of the campaign.
+isPublished|A value of 0 or 1
+
+#### Response
+
+`Expected Response Code: 201`
+
+**Properties**
+
+Same as [Get Campaign](#get-campaign).
+
+### Edit Campaign
+```php
+<?php
+
+$id   = 1;
+$data = array(
+    'name'        => 'New campaign name',
+    'isPublished' => 0
+);
+
+// Create new a campaign of ID 1 is not found?
+$createIfNotFound = true;
+
+$campaign = $campaignApi->edit($id, $data, $createIfNotFound);
+```
+Edit a new campaign. Note that this supports PUT or PATCH depending on the desired behavior.
+
+**PUT** creates a campaign if the given ID does not exist and clears all the campaign information, adds the information from the request.
+**PATCH** fails if the campaign with the given ID does not exist and updates the campaign field values with the values form the request.
+
+#### HTTP Request
+
+To edit a campaign and return a 404 if the campaign is not found:
+
+`PATCH /campaigns/ID/edit`
+
+To edit a campaign and create a new one if the campaign is not found:
+
+`PUT /campaigns/ID/edit`
+
+**Post Parameters**
+
+Name|Description
+----|-----------
+name|Campaign name is the only required field
+alias|Name alias generated automatically if not set
+description|A description of the campaign.
+isPublished|A value of 0 or 1
+
+#### Response
+
+If `PUT`, the expected response code is `200` if the campaign was edited or `201` if created.
+
+If `PATCH`, the expected response code is `200`.
+
+**Properties**
+
+Same as [Get Campaign](#get-campaign).
+
+### Delete Campaign
+```php
+<?php
+
+$campaign = $campaignApi->delete($id);
+```
+Delete a campaign.
+
+#### HTTP Request
+
+`DELETE /campaigns/ID/delete`
+
+#### Response
+
+`Expected Response Code: 200`
+
+**Properties**
+
+Same as [Get Campaign](#get-campaign).
+
+### Add Contact to a Campaign
 
 ```php
 <?php
 
 //...
-$response = $listApi->removeLead($leadId, $listId);
+$response = $campaignApi->addContact($campaignId, $contactId);
 if (!isset($response['success'])) {
     // handle error
 }
@@ -248,11 +362,41 @@ if (!isset($response['success'])) {
 }
 ```
 
-Manually remove a lead from a specific campaign.
+Manually add a contact to a specific campaign.
 
 #### HTTP Request
 
-`POST /campaigns/CAMPAIGN_ID/lead/remove/LEAD_ID`
+`POST /campaigns/CAMPAIGN_ID/contact/CONTACT_ID/add`
+
+#### Response
+
+`Expected Response Code: 200`
+
+See JSON code example.
+
+
+### Remove Contact from a Campaign
+
+```php
+<?php
+
+//...
+$response = $listApi->removeContact($contactId, $listId);
+if (!isset($response['success'])) {
+    // handle error
+}
+```
+```json
+{
+    "success": true
+}
+```
+
+Manually remove a contact from a specific campaign.
+
+#### HTTP Request
+
+`POST /campaigns/CAMPAIGN_ID/contact/CONTACT_ID/remove`
 
 #### Response
 

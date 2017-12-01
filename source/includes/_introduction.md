@@ -1,6 +1,6 @@
 # Introduction
 
-Welcome to the Mautic Developer Documentation. This documentation will go over how to build a Mautic Addon that extends the features of Mautic, how to build custom themes, and and how to integrate applications outside of Mautic using its REST API. 
+Welcome to the Mautic Developer Documentation. This documentation will go over how to build a Mautic Plugin that extends the features of Mautic, how to build custom themes, and and how to integrate applications outside of Mautic using its REST API. 
 
 ## Submitting Code to Mautic
 
@@ -12,13 +12,13 @@ The code should try to follow [Symfony's Coding Standards](http://symfony.com/do
 
 ## Symfony
 
-Mautic is built on [Symfony](http://symfony.com), the popular PHP framework (Mautic 1.0.x uses Symfony version 2.5). This document will go over the basics but most of [their documentation](http://symfony.com/doc/2.5/book/index.html) applies to Mautic as well which can be used to obtain more advanced Symfony functionality.
+Mautic is built on [Symfony](http://symfony.com), the popular PHP framework (Mautic 1.0.x uses Symfony 2.5; Mautic 2.0.x uses Symfony 2.8). This document will go over the basics but most of [their documentation](http://symfony.com/doc/2.8/book/index.html) applies to Mautic as well which can be used to obtain more advanced Symfony functionality.
   
 There are some structural differences between Mautic and standard Symfony. Below is a list of where you will find some of standard Symfony locations in Mautic:
  
  Symfony | Mautic
  ------- | -------
- src/ | app/bundles (Mautic core) or addons/ (Mautic addons)
+ src/ | app/bundles (Mautic core) or plugins/ (Mautic plugins)
  web/ | /
  AcmeBundle/Resources/config | AcmeBundle/Config
  AcmeBundle/Resources/views | AcmeBundle/Views
@@ -42,7 +42,7 @@ There are three environments in Mautic: prod, dev, and test.
 
 **prod** is used when accessing the site through index.php.
 
-**dev** is used when accessing the site through index_dev.php. Using Mautic in the dev environment will activate Symfony's profiler toolbar, has more strict error handling, will display information about exceptions, and will not cache as much (see below). Note that steps should be taken to ensure index_dev.php is not accessible to the public as it could potentially reveal sensitive information. It is restricted to localhost by default.
+**dev** is used when accessing the site through index_dev.php. Using Mautic in the dev environment will activate Symfony's profiler toolbar, has more strict error handling, will display information about exceptions, and will not cache as much (see below). Note that steps should be taken to ensure index_dev.php is not accessible to the public as it could potentially reveal sensitive information. It is restricted to localhost by default. However, there are two ways to allow access to index_dev.php from a non-localhost. The first option is to set a header from the web-server with the IP addresses assigned to `MAUTIC_DEV_HOSTS`. The second and easier option is to add an array to your installation's `app/config/local.php` file as `'dev_hosts' = ['123.123.123.123', '124.124.124.124'],` then clear the [cache](#cache).
 
 **test** is used mainly for PHP Unit Tests.
 
@@ -59,3 +59,4 @@ Symfony makes heavy use of a filesystem cache. Frequently clearing this cache wi
  <aside class="warning">
  If you get class could not be found or cannot redeclare class errors when using the cache:clear command, manually delete the app/cache/ENV folder then run the command and/or browse to the site to rebuild.
  </aside>
+ 
